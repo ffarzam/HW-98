@@ -1,6 +1,6 @@
 import datetime
 import calendar
-import time
+import jdatetime
 
 
 
@@ -16,6 +16,9 @@ def main(date_1,date_2):
     number_of_leap_year = calendar.leapdays(year_1, year_2)
     print(f"List of Leap Years: {leap_years}")
     print(f"Number of Leap Years: {number_of_leap_year}")
+
+    print(jdatetime.date.fromgregorian(day=first_date.day , month=first_date.month , year=first_date.year))
+    print(jdatetime.date.fromgregorian(day=second_date.day , month=second_date.month ,year=second_date.year))
 
 
 if __name__ == "__main__":
