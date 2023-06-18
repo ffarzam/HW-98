@@ -17,10 +17,14 @@ while True:
     if num == objective:
         print("\033[0;34m""Congratulation, You Won. Your guess was correct""\033[0m")
         break
-    elif count==5:
+    elif count==args.g:
         print("\033[0;35m""Sorry, You lost. None of your guess was correct.""\033[0m")
         break
     else:
-        print("\033[0;36m"f"؛our guess was incorrect. You have {5-count} more guess""\033[0m")
-        count+=1
+        print("\033[0;36m" f"Your guess was incorrect. You have {args.g - count} more guess""\033[0m")
+        if num < objective:
+            print("\33[0;36m" "Enter Higher Number" "\033[0;m")
+        elif num > objective:
+            print("\33[0;36m" "Enter Lower Number" "\033[0;m")
 
+        count+=1
