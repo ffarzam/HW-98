@@ -18,3 +18,8 @@ FROM (SELECT customer.customer_id, customer.first_name, customer.last_name, coun
       INNER JOIN country ON country.country_id=city.country_id) AS customer_country
 GROUP BY country
 ORDER BY country ASC;
+
+--part 4
+SELECT title,rental_duration,avg(rental_rate) FROM film Group by title,rental_duration ORDER BY title;
+
+--SELECT title,rental_duration, rental_rate FROM film ORDER BY title
