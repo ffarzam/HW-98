@@ -30,3 +30,12 @@ FROM rental
 GROUP BY customer_id
 ORDER BY count DESC
 LIMIT 10;
+
+--part 6
+SELECT first_name, country
+FROM (SELECT customer.customer_id, customer.first_name, country.country
+      FROM customer
+      INNER JOIN address on customer.address_id=address.address_id
+      INNER JOIN city ON city.city_id=address.address_id
+      INNER JOIN country ON country.country_id=city.country_id) AS customer_country
+WHERE first_name LIKE 'A%' AND and country = 'United States';
