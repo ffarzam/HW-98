@@ -29,22 +29,28 @@ def get_size_extension(path,file_format):
 
 parser = argparse.ArgumentParser()
 group = parser.add_mutually_exclusive_group()
-group.add_argument("-d",type=pathlib.Path)
+group.add_argument("-d",type = pathlib.Path)
 group.add_argument("-f",type = pathlib.Path)
 parser.add_argument("-F",type = str)
 args=parser.parse_args()
 
 if args.d:
-    if args.F:
-        final_size = get_size_extension(args.d, args.F)
-        print("\033[0;31m" f"Size: {(final_size / 1024)} KB" "\033[0m")
+    if args.d.is_dir():
+        if args.F:
+            final_size = get_size_extension(args.d, args.F)
+            print("\033[0;31m" f"Size: {(final_size / 1024)} KB" "\033[0m")
+        else:
+            final_size = get_dir_size(args.d)
+            print("\033[0;31m" f"Size: {(final_size / 1024)} KB" "\033[0m")
     else:
-        final_size = get_dir_size(args.d)
-        print("\033[0;31m" f"Size: {(final_size / 1024)} KB" "\033[0m")
+        print("\033[0;31m""'d' should be followed by a directory path""\033[0m")
 
 elif args.f:
-    final_size = get_file_size(args.f)
-    if isinstance(final_size,str):
-        print("\033[0;31m" f"{final_size} " "\033[0m")
+    if args.f.is_file():
+        final_size = get_file_size(args.f)
+        if isinstance(final_size,str):
+            print("\033[0;31m" f"{final_size} " "\033[0m")
+        else:
+            print("\033[0;31m" f"Size: {(final_size / 1024)} KB" "\033[0m")
     else:
-        print("\033[0;31m" f"Size: {(final_size / 1024)} KB" "\033[0m")
+        print("\033[0;31m" "'f' should be followed by a file path""\033[0m")
