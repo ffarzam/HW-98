@@ -8,3 +8,13 @@ SELECT *
 FROM film
 ORDER BY length ASC
 LIMIT 10;
+
+--Part 3
+SELECT country, COUNT(customer_id)
+FROM (SELECT customer.customer_id, customer.first_name, customer.last_name, country.country
+      FROM customer
+      INNER JOIN address on customer.address_id=address.address_id
+      INNER JOIN city ON city.city_id=address.address_id
+      INNER JOIN country ON country.country_id=city.country_id) AS customer_country
+GROUP BY country
+ORDER BY country ASC;
