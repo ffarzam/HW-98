@@ -38,7 +38,7 @@ FROM (SELECT customer.customer_id, customer.first_name, country.country
       INNER JOIN address on customer.address_id=address.address_id
       INNER JOIN city ON city.city_id=address.address_id
       INNER JOIN country ON country.country_id=city.country_id) AS customer_country
-WHERE first_name LIKE 'A%' AND and country = 'United States';
+WHERE first_name LIKE 'A%' AND country = 'United States';
 
 --part 7
 SELECT *
