@@ -23,3 +23,10 @@ ORDER BY country ASC;
 SELECT title,rental_duration,avg(rental_rate) FROM film Group by title,rental_duration ORDER BY title;
 
 --SELECT title,rental_duration, rental_rate FROM film ORDER BY title
+
+--part 5
+SELECT customer_id,COUNT(rental_id) AS count
+FROM rental
+GROUP BY customer_id
+ORDER BY count DESC
+LIMIT 10;
