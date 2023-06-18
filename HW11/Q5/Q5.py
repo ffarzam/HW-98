@@ -5,7 +5,7 @@ import os
 
 def get_dir_size(path):
     size = 0
-    for i in os.scandir(args.d):
+    for i in os.scandir(path):
         if os.path.isfile(i):
             size += os.path.getsize(i)
         else:
@@ -34,9 +34,7 @@ group.add_argument("-f",type = pathlib.Path)
 parser.add_argument("-F",type = str)
 args=parser.parse_args()
 
-
 if args.d:
-
     if args.F:
         final_size = get_size_extension(args.d, args.F)
         print("\033[0;31m" f"Size: {(final_size / 1024)} KB" "\033[0m")
