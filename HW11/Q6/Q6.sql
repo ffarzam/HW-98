@@ -47,6 +47,7 @@ group by film.film_id
 HAVING replacement_cost < 15 AND SUM(AGE(return_date, rental_date)) > INTERVAL '5 days'
 ORDER BY rent_time DESC;
 
+
 --Part 7 Version 2
 SELECT film.film_id,film.title,film.replacement_cost,ROUND(EXTRACT(DAY FROM SUM(AGE(return_date, rental_date)))+(EXTRACT(HOUR FROM SUM(AGE(return_date, rental_date)))/24)) as rent_time
 FROM film
@@ -55,4 +56,3 @@ INNER JOIN rental ON rental.inventory_id=inventory.inventory_id
 group by film.film_id
 HAVING replacement_cost < 15 AND SUM(AGE(return_date, rental_date)) > INTERVAL '5 days'
 ORDER BY rent_time DESC;
-
