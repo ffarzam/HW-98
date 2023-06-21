@@ -1,4 +1,5 @@
 import argparse
+from decimal import Decimal
 
 parser = argparse.ArgumentParser()
 
@@ -8,4 +9,6 @@ args = parser.parse_args()
 
 GPA = sum(args.grades) / len(args.grades)
 
-print("\033[0;31m"f"{GPA =: .{args.float}f}" "\033[0m")
+GPA = Decimal(f"{GPA: .{args.float}f}")
+
+print("\033[0;31m"f"{GPA}" "\033[0m")
