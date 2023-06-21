@@ -34,7 +34,7 @@ LIMIT 10;
 SELECT customer.customer_id, customer.first_name, country.country
 FROM customer
 INNER JOIN address on customer.address_id=address.address_id
-INNER JOIN city ON city.city_id=address.address_id
+INNER JOIN city ON city.city_id=address.city_id
 INNER JOIN country ON country.country_id=city.country_id
 WHERE first_name LIKE 'A%' AND country = 'United States';
 
