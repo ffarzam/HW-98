@@ -22,9 +22,9 @@ def is_daylight_saving(date_):
         return False
 
 
-def difference_in_day(f_date, s_date):
+def difference_in_seconds(f_date, s_date):
     diff = s_date - f_date
-    print("\033[0;31m" f"Difference of {f_date} and {s_date}: {diff.days} Days" "\033[0m")
+    print("\033[0;31m" f"Difference of {f_date} and {s_date}: {diff.total_seconds()} Days" "\033[0m")
 
 
 def leap_year_count(f_date, s_date):
@@ -61,7 +61,7 @@ def main(date_1, date_2):
 
     first_date, second_date = check_date(first_date, second_date)
 
-    difference_in_day(first_date, second_date)
+    difference_in_seconds(first_date, second_date)
 
     leap_year_count(first_date, second_date)
 
