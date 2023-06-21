@@ -38,7 +38,21 @@ INNER JOIN city ON city.city_id=address.city_id
 INNER JOIN country ON country.country_id=city.country_id
 WHERE first_name LIKE 'A%' AND country = 'United States';
 
---part 7
-SELECT *
+--part 7 Version 1
+SELECT film.film_id,film.title,film.replacement_cost,SUM(AGE(return_date, rental_date)) as rent_time
 FROM film
-WHERE rental_duration > 5 AND replacement_cost < 15;
+INNER JOIN inventory ON inventory.film_id=film.film_id
+INNER JOIN rental ON rental.inventory_id=inventory.inventory_id
+group by film.film_id
+HAVING replacement_cost < 15 AND SUM(AGE(return_date, rental_date)) > INTERVAL '5 days'
+ORDER BY rent_time DESC;
+
+--Part 7 Version 2
+SELECT film.film_id,film.title,film.replacement_cost,ROUND(EXTRACT(DAY FROM SUM(AGE(return_date, rental_date)))+(EXTRACT(HOUR FROM SUM(AGE(return_date, rental_date)))/24)) as rent_time
+FROM film
+INNER JOIN inventory ON inventory.film_id=film.film_id
+INNER JOIN rental ON rental.inventory_id=inventory.inventory_id
+group by film.film_id
+HAVING replacement_cost < 15 AND SUM(AGE(return_date, rental_date)) > INTERVAL '5 days'
+ORDER BY rent_time DESC;
+
