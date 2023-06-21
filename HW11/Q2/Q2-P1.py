@@ -7,7 +7,7 @@ def make_one_string(lst):
 
 
 def validate_numbers(string):
-    num_lst = re.findall(r'[0-9]+', string)
+    num_lst = re.findall(r'[-+]?(?:\d*\.*\d+)', string)
     return num_lst
 
 
