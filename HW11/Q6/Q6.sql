@@ -13,7 +13,7 @@ LIMIT 10;
 SELECT country, COUNT(customer_id)
 FROM customer
 INNER JOIN address on customer.address_id=address.address_id
-INNER JOIN city ON city.city_id=address.address_id
+INNER JOIN city ON city.city_id=address.city_id
 INNER JOIN country ON country.country_id=city.country_id
 GROUP BY country
 ORDER BY country ASC;
