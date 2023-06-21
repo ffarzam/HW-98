@@ -1,5 +1,6 @@
 import sys
 import re
+from decimal import Decimal
 
 
 def make_one_string(lst):
@@ -16,7 +17,7 @@ def gpa(lst):
 
 
 def make_float(lst):
-    return list(map(float, lst))
+    return list(map(Decimal, lst))
 
 
 def main():
