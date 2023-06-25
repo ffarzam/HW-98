@@ -35,3 +35,8 @@ class WeatherDatabase:
         {response_data['feels_like']},
         '{response_data['last_updated']}');''')
         self.conn.commit()
+
+    def get_request_count(self) -> int:
+        self.cur.execute('''SELECT COUNT(*) FROM requests''')
+        result = self.cur.fetchone()
+        return result[0]
