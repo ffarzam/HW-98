@@ -45,3 +45,10 @@ class WeatherDatabase:
         self.cur.execute('''SELECT COUNT(*) FROM responses''')
         result = self.cur.fetchone()
         return result[0]
+
+    def get_last_hour_requests(self) -> list:
+        self.cur.execute('''SELECT city, TO_CHAR(request_time, 'YYYY-MM-DD HH24:MI:SS')
+                            FROM requests 
+                            WHERE AGE(NOW(),request_time) < INTERVAL '1 Hour';''')
+        result = self.cur.fetchall()
+        return result
