@@ -1,5 +1,8 @@
 import requests as rq
 from datetime import datetime
+from http.server import HTTPServer, BaseHTTPRequestHandler
+import json
+from urllib.parse import parse_qsl, urlparse
 
 
 class ConnectionManager:
@@ -27,3 +30,22 @@ def get_city_weather(city: str) -> dict:
             weather_info["last_updated"] = datetime.fromtimestamp(response.json()["dt"]).strftime("%Y-%m-%d %H:%M:%S")
             return weather_info
     return response.json()
+
+
+class MyWeatherServer(BaseHTTPRequestHandler):
+
+    def url(self):
+        return urlparse(self.path)
+
+    def query_data(self):
+        return dict(parse_qsl(self.url().query))
+
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header('Content-Type', 'application/json')
+        self.end_headers()
+        query_data = self.query_data()
+        choice = query_data["city"]
+        weather_info = get_city_weather(choice)
+        weather_info_json = json.dumps(weather_info)
+        self.wfile.write(weather_info_json.encode("utf-8"))
