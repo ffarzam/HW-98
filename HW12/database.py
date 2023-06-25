@@ -25,3 +25,13 @@ class WeatherDatabase:
     def save_request_data(self, city_name: str, request_time: str) -> None:
         self.cur.execute("""INSERT INTO requests(city,request_time) VALUES (%s,%s);""", (city_name, request_time))
         self.conn.commit()
+
+    def save_response_data(self, city_name: str, response_data: dict) -> None:
+        self.cur.execute(f'''INSERT INTO responses(request_id,city,temperature,feels_like_temperature,last_updated_time)
+        VALUES (
+        (SELECT last_value FROM requests_id_seq),
+        '{city_name}',
+        {response_data['temperature']},
+        {response_data['feels_like']},
+        '{response_data['last_updated']}');''')
+        self.conn.commit()
