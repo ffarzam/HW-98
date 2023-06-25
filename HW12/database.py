@@ -57,3 +57,7 @@ class WeatherDatabase:
         self.cur.execute("SELECT city, COUNT(*) FROM requests GROUP BY city")
         result = self.cur.fetchall()
         return result
+
+    def close(self):
+        self.cur.close()
+        self.conn.close()
