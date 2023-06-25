@@ -1,3 +1,4 @@
+from typing import List, Tuple, Any
 import psycopg2
 
 
@@ -6,7 +7,7 @@ class WeatherDatabase:
         self.conn = psycopg2.connect(database=dbname, user=user, password=password, host=host, port=port)
         self.cur = self.conn.cursor()
 
-    def create_tables(self):
+    def create_tables(self) -> None:
         self.cur.execute("""CREATE TABLE IF NOT EXISTS Requests(
                             id BIGSERIAL PRIMARY KEY NOT NULL,
                             city VARCHAR(50) NOT NULL,
@@ -46,18 +47,18 @@ class WeatherDatabase:
         result = self.cur.fetchone()
         return result[0]
 
-    def get_last_hour_requests(self) -> list:
+    def get_last_hour_requests(self) -> List[Tuple[Any, ...]]:
         self.cur.execute('''SELECT city, TO_CHAR(request_time, 'YYYY-MM-DD HH24:MI:SS')
                             FROM requests 
                             WHERE AGE(NOW(),request_time) < INTERVAL '1 Hour';''')
         result = self.cur.fetchall()
         return result
 
-    def get_city_request_count(self) -> list:
+    def get_city_request_count(self) -> List[Tuple[Any, ...]]:
         self.cur.execute("SELECT city, COUNT(*) FROM requests GROUP BY city")
         result = self.cur.fetchall()
         return result
 
-    def close(self):
+    def close(self) -> None:
         self.cur.close()
         self.conn.close()
