@@ -21,3 +21,7 @@ class WeatherDatabase:
                             last_updated_time TIMESTAMP NOT NULL,
                             FOREIGN KEY (request_id) REFERENCES Requests(id));""")
         self.conn.commit()
+
+    def save_request_data(self, city_name: str, request_time: str) -> None:
+        self.cur.execute("""INSERT INTO requests(city,request_time) VALUES (%s,%s);""", (city_name, request_time))
+        self.conn.commit()
