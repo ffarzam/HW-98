@@ -40,3 +40,8 @@ class WeatherDatabase:
         self.cur.execute('''SELECT COUNT(*) FROM requests''')
         result = self.cur.fetchone()
         return result[0]
+
+    def get_successful_request_count(self) -> int:
+        self.cur.execute('''SELECT COUNT(*) FROM responses''')
+        result = self.cur.fetchone()
+        return result[0]
