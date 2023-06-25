@@ -52,3 +52,8 @@ class WeatherDatabase:
                             WHERE AGE(NOW(),request_time) < INTERVAL '1 Hour';''')
         result = self.cur.fetchall()
         return result
+
+    def get_city_request_count(self) -> list:
+        self.cur.execute("SELECT city, COUNT(*) FROM requests GROUP BY city")
+        result = self.cur.fetchall()
+        return result
