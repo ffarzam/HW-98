@@ -49,3 +49,19 @@ class MyWeatherServer(BaseHTTPRequestHandler):
         weather_info = get_city_weather(choice)
         weather_info_json = json.dumps(weather_info)
         self.wfile.write(weather_info_json.encode("utf-8"))
+
+
+def start_server() -> None:
+    HOST = "192.168.1.167"
+    # HOST="192.168.1.110"
+    PORT = 8080
+
+    server = HTTPServer((HOST, PORT), MyWeatherServer)
+    print("Server listening on")
+    server.serve_forever()
+    server.server_close()
+    print("Server closed")
+
+
+if __name__ == "__main__":
+    start_server()
