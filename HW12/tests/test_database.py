@@ -77,3 +77,21 @@ def test_save_response_data(db):
     cursor.execute(f'''DELETE FROM requests WHERE id = {id_num};''')
     cursor.execute(f'''SELECT setval('requests_id_seq', {id_num}, false);''')
     db.conn.commit()
+
+
+def test_get_request_count(db):
+    cursor = db.conn.cursor()
+    num = db.get_request_count()
+
+    city_name = "rasht"
+    request_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    cursor.execute("""INSERT INTO requests(city,request_time) VALUES (%s,%s);""", (city_name, request_time))
+    db.conn.commit()
+
+    assert db.get_request_count() == 1 + num
+
+    cursor.execute('''SELECT last_value FROM requests_id_seq''')
+    id_num = cursor.fetchone()[0]
+    cursor.execute(f'''DELETE FROM requests WHERE id = {id_num};''')
+    cursor.execute(f'''SELECT setval('requests_id_seq', {id_num}, false);''')
+    db.conn.commit()
