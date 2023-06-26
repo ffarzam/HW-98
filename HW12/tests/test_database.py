@@ -150,3 +150,31 @@ def test_get_last_hour_requests(db):
     cursor.execute(f'''DELETE FROM requests WHERE id = {id_num};''')
     cursor.execute(f'''SELECT setval('requests_id_seq', {id_num}, false);''')
     db.conn.commit()
+
+
+def test_get_city_request_count(db):
+    cursor = db.conn.cursor()
+    city_name = "rasht"
+
+    lst = db.get_city_request_count()
+    f_count = 0
+    for item in lst:
+        if item[0] == city_name:
+            f_count = item[1]
+
+    request_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    cursor.execute("""INSERT INTO requests(city,request_time) VALUES (%s,%s);""", (city_name, request_time))
+    db.conn.commit()
+
+    lst = db.get_city_request_count()
+    s_count = 1
+    for item in lst:
+        if item[0] == city_name:
+            s_count = item[1]
+
+    assert s_count == f_count + 1
+    cursor.execute('''SELECT last_value FROM requests_id_seq''')
+    id_num = cursor.fetchone()[0]
+    cursor.execute(f'''DELETE FROM requests WHERE id = {id_num};''')
+    cursor.execute(f'''SELECT setval('requests_id_seq', {id_num}, false);''')
+    db.conn.commit()
