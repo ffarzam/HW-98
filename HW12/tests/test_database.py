@@ -41,3 +41,39 @@ def test_save_request_data(db):
     cursor.execute(f'''DELETE FROM requests WHERE id = {id_num};''')
     cursor.execute(f'''SELECT setval('requests_id_seq', {id_num}, false);''')
     db.conn.commit()
+
+
+def test_save_response_data(db):
+    cursor = db.conn.cursor()
+    city_name = "rasht"
+    request_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    cursor.execute("""INSERT INTO requests(city,request_time) VALUES (%s,%s);""", (city_name, request_time))
+    db.conn.commit()
+
+    city_name = "rasht"
+    temperature = 30
+    feels_like_temperature = 28.4
+    last_update_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    weather_info = {'temperature': temperature, 'feels_like': feels_like_temperature, 'last_updated': last_update_time}
+
+    db.save_response_data(city_name, weather_info)
+
+    cursor = db.conn.cursor()
+    cursor.execute("SELECT * FROM responses ORDER BY id DESC")
+    row = cursor.fetchone()
+
+    assert row[2] == city_name
+    assert row[3] == temperature
+    assert float(row[4]) == feels_like_temperature
+    assert row[5] == datetime.datetime.strptime(last_update_time, "%Y-%m-%d %H:%M:%S")
+    cursor.execute('''SELECT last_value FROM responses_id_seq''')
+    id_num = cursor.fetchone()[0]
+    cursor.execute(f'''DELETE FROM responses WHERE id = {id_num};''')
+    cursor.execute(f'''SELECT setval('responses_id_seq', {id_num}, false);''')
+    db.conn.commit()
+
+    cursor.execute('''SELECT last_value FROM requests_id_seq''')
+    id_num = cursor.fetchone()[0]
+    cursor.execute(f'''DELETE FROM requests WHERE id = {id_num};''')
+    cursor.execute(f'''SELECT setval('requests_id_seq', {id_num}, false);''')
+    db.conn.commit()
