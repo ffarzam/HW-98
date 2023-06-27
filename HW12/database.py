@@ -8,10 +8,17 @@ class WeatherDatabase:
         self.cur = self.conn.cursor()
 
     def create_tables(self) -> None:
+        self.cur.execute("""CREATE TABLE IF NOT EXISTS Users(
+                            id BIGSERIAL PRIMARY KEY NOT NULL,
+                            username VARCHAR(50) NOT NULL UNIQUE,
+                            password TEXT NOT NULL);""")
+
         self.cur.execute("""CREATE TABLE IF NOT EXISTS Requests(
                             id BIGSERIAL PRIMARY KEY NOT NULL,
+                            user_id BIGINT NOT NULL,
                             city VARCHAR(50) NOT NULL,
-                            request_time TIMESTAMP);""")
+                            request_time TIMESTAMP,
+                            FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE ON UPDATE CASCADE);""")
 
         self.cur.execute("""CREATE TABLE IF NOT EXISTS Responses(
                             id BIGSERIAL PRIMARY KEY NOT NULL,
@@ -20,11 +27,38 @@ class WeatherDatabase:
                             temperature DECIMAL NOT NULL,
                             feels_like_temperature DECIMAL NOT NULL,
                             last_updated_time TIMESTAMP NOT NULL,
-                            FOREIGN KEY (request_id) REFERENCES Requests(id));""")
+                            FOREIGN KEY (request_id) REFERENCES Requests(id) ON DELETE CASCADE ON UPDATE CASCADE);""")
         self.conn.commit()
 
-    def save_request_data(self, city_name: str, request_time: str) -> None:
-        self.cur.execute("""INSERT INTO requests(city,request_time) VALUES (%s,%s);""", (city_name, request_time))
+    def set_user(self, my_username, my_password):
+        self.cur.execute(
+            f"""INSERT INTO Users(username,password) VALUES ('{my_username}',crypt('{my_password}', gen_salt('bf')));""")
+        self.conn.commit()
+
+    def login_user(self, my_username, my_password):
+        self.cur.execute(
+            f"""SELECT (password = crypt('{my_password}', password)) AS pwd_match FROM Users WHERE username ='{my_username}';""")
+        result = self.cur.fetchone()
+        if result is None:
+            result = (False,)
+        return result[0]
+
+    def check_username(self, username):
+        self.cur.execute(
+            f"""SELECT username FROM Users WHERE username ='{username}';""")
+        result = self.cur.fetchone()
+        return result
+
+    def get_user(self, my_username):
+        self.cur.execute(
+            f"""SELECT id 
+            FROM Users WHERE username ='{my_username}';""")
+        result = self.cur.fetchone()[0]
+        return result
+
+    def save_request_data(self, user_id, city_name: str, request_time: str) -> None:
+        self.cur.execute(f"""INSERT INTO requests(user_id,city,request_time) 
+                            VALUES ({user_id},'{city_name}', '{request_time}');""")
         self.conn.commit()
 
     def save_response_data(self, city_name: str, response_data: dict) -> None:
