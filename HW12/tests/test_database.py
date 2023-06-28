@@ -101,8 +101,9 @@ def test_save_request_data(db):
     user_id = 1
     city_name = "rasht"
     request_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    status_code = '200'
 
-    db.save_request_data(user_id, city_name, request_time)
+    db.save_request_data(user_id, city_name, request_time, status_code)
 
     cursor = db.conn.cursor()
     cursor.execute("SELECT * FROM requests;")
@@ -111,6 +112,7 @@ def test_save_request_data(db):
     assert row[1] == user_id
     assert row[2] == city_name
     assert row[3] == datetime.datetime.strptime(request_time, "%Y-%m-%d %H:%M:%S")
+    assert row[4] == int('200')
 
 
 def test_save_response_data(db):
@@ -126,8 +128,9 @@ def test_save_response_data(db):
     cursor = db.conn.cursor()
     city_name = "rasht"
     request_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    cursor.execute(f"""INSERT INTO requests(user_id,city,request_time) 
-                            VALUES ({user_id},'{city_name}', '{request_time}');""")
+    status_code = '200'
+    cursor.execute(f"""INSERT INTO requests(user_id,city,request_time,status_code) 
+                            VALUES ({user_id},'{city_name}', '{request_time}', '{status_code}');""")
     city_name = "rasht"
     temperature = 30.5
     feels_like_temperature = 28.4
@@ -160,8 +163,9 @@ def test_get_request_count(db):
     cursor = db.conn.cursor()
     city_name = "rasht"
     request_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    cursor.execute(f"""INSERT INTO requests(user_id,city,request_time) 
-                                VALUES ({user_id},'{city_name}', '{request_time}');""")
+    status_code = '200'
+    cursor.execute(f"""INSERT INTO requests(user_id,city,request_time,status_code) 
+                                VALUES ({user_id},'{city_name}', '{request_time}', '{status_code}');""")
 
     assert db.get_request_count() == 1
 
@@ -180,8 +184,9 @@ def test_get_successful_request_count(db):
     cursor = db.conn.cursor()
     city_name = "invalid"
     request_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    cursor.execute(f"""INSERT INTO requests(user_id,city,request_time) 
-                                    VALUES ({user_id},'{city_name}', '{request_time}');""")
+    status_code = '404'
+    cursor.execute(f"""INSERT INTO requests(user_id,city,request_time,status_code) 
+                                VALUES ({user_id},'{city_name}', '{request_time}', '{status_code}');""")
     db.conn.commit()
 
     username = "fffarzam"
@@ -190,8 +195,9 @@ def test_get_successful_request_count(db):
     user_id = 2
     city_name = "tehran"
     request_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    cursor.execute(f"""INSERT INTO requests(user_id,city,request_time) 
-                                        VALUES ({user_id},'{city_name}', '{request_time}');""")
+    status_code = '200'
+    cursor.execute(f"""INSERT INTO requests(user_id,city,request_time,status_code) 
+                                VALUES ({user_id},'{city_name}', '{request_time}', '{status_code}');""")
     db.conn.commit()
 
     city_name = "tehran"
@@ -225,8 +231,9 @@ def test_get_last_hour_requests(db):
     user_id = 1
     city_name = "tehran"
     request_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    cursor.execute(f"""INSERT INTO requests(user_id,city,request_time) 
-                                            VALUES ({user_id},'{city_name}', '{request_time}');""")
+    status_code = '200'
+    cursor.execute(f"""INSERT INTO requests(user_id,city,request_time,status_code) 
+                                VALUES ({user_id},'{city_name}', '{request_time}', '{status_code}');""")
     db.conn.commit()
 
     cursor = db.conn.cursor()
@@ -239,8 +246,9 @@ def test_get_last_hour_requests(db):
     user_id1 = 2
     city_name1 = "rasht"
     request_time1 = "2023-04-08 23:11:11"
-    cursor.execute(f"""INSERT INTO requests(user_id,city,request_time) 
-                                                VALUES ({user_id1},'{city_name1}', '{request_time1}');""")
+    status_code1 = '200'
+    cursor.execute(f"""INSERT INTO requests(user_id,city,request_time,status_code) 
+                                VALUES ({user_id1},'{city_name1}', '{request_time1}', '{status_code1}');""")
     db.conn.commit()
 
     lst = db.get_last_hour_requests()
@@ -262,9 +270,10 @@ def test_get_city_request_count(db):
 
     city_name = "rasht"
     request_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    cursor = db.conn.cursor()
-    cursor.execute(f"""INSERT INTO requests(user_id,city,request_time) 
-                                            VALUES ({user_id},'{city_name}', '{request_time}');""")
+    # cursor = db.conn.cursor()
+    status_code = '200'
+    cursor.execute(f"""INSERT INTO requests(user_id,city,request_time,status_code) 
+                                VALUES ({user_id},'{city_name}', '{request_time}', '{status_code}');""")
     db.conn.commit()
     lst = db.get_city_request_count()
     for item in lst:
@@ -286,9 +295,10 @@ def test_cache(db):
 
     city_name = "rasht"
     request_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    cursor = db.conn.cursor()
-    cursor.execute(f"""INSERT INTO requests(user_id,city,request_time) 
-                                                VALUES ({user_id},'{city_name}', '{request_time}');""")
+    # cursor = db.conn.cursor()
+    status_code = '200'
+    cursor.execute(f"""INSERT INTO requests(user_id,city,request_time,status_code) 
+                                VALUES ({user_id},'{city_name}', '{request_time}', '{status_code}');""")
     db.conn.commit()
 
     temperature = 30.0
@@ -307,9 +317,10 @@ def test_cache(db):
 
     city_name1 = "tehran"
     request_time1 = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    cursor = db.conn.cursor()
-    cursor.execute(f"""INSERT INTO requests(user_id,city,request_time) 
-                                                    VALUES ({user_id},'{city_name1}', '{request_time1}');""")
+    # cursor = db.conn.cursor()
+    status_code = '200'
+    cursor.execute(f"""INSERT INTO requests(user_id,city,request_time,status_code) 
+                                VALUES ({user_id},'{city_name}', '{request_time}', '{status_code}');""")
     db.conn.commit()
 
     temperature1 = 31.0
