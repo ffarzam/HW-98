@@ -74,7 +74,7 @@ def successful_request_count(db):
 def last_hour_requests(db):
     lst = db.get_last_hour_requests()
     for item in lst:
-        print('\033[32m', f"{item[0]}) {item[1]:25}{item[2]}", '\033[m')
+        print('\033[32m', f"{item[1]:25}{item[3]:35}{item[2]}", '\033[m')
         print()
 
 
