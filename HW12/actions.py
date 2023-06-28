@@ -11,7 +11,7 @@ def sign_in():
 
 
 def send_user(user):
-    user.save()
+    return user.save()
 
 
 def is_logged_in(username, password):
