@@ -90,7 +90,7 @@ class WeatherDatabase:
         return result
 
     def get_city_request_count(self) -> List[Tuple[Any, ...]]:
-        self.cur.execute("SELECT city, COUNT(*) FROM requests GROUP BY city")
+        self.cur.execute("SELECT city, COUNT(*) FROM requests GROUP BY city ORDER BY COUNT(*) DESC")
         result = self.cur.fetchall()
         return result
 
