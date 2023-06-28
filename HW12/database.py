@@ -18,6 +18,7 @@ class WeatherDatabase:
                             user_id BIGINT NOT NULL,
                             city VARCHAR(50) NOT NULL,
                             request_time TIMESTAMP,
+                            status_code BIGINT,
                             FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE ON UPDATE CASCADE);""")
 
         self.cur.execute("""CREATE TABLE IF NOT EXISTS Responses(
@@ -56,9 +57,9 @@ class WeatherDatabase:
         result = self.cur.fetchone()
         return result
 
-    def save_request_data(self, user_id, city_name: str, request_time: str) -> None:
-        self.cur.execute(f"""INSERT INTO requests(user_id,city,request_time) 
-                            VALUES ({user_id},'{city_name}', '{request_time}');""")
+    def save_request_data(self, user_id, city_name: str, request_time: str, status_code: str) -> None:
+        self.cur.execute(f"""INSERT INTO requests(user_id,city,request_time,status_code) 
+                            VALUES ({user_id},'{city_name}', '{request_time}','{status_code}');""")
         self.conn.commit()
 
     def save_response_data(self, city_name: str, response_data: dict) -> None:
