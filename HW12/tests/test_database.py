@@ -13,18 +13,6 @@ def db():
     cursor.execute('''DROP TABLE IF EXISTS users;''')
     db.conn.commit()
 
-    # cursor.execute('''SELECT last_value FROM responses_id_seq''')
-    # id_num = cursor.fetchone()[0]
-    # cursor.execute(f'''DELETE FROM responses WHERE id = {id_num};''')
-    # cursor.execute(f'''SELECT setval('responses_id_seq', {id_num}, false);''')
-    # db.conn.commit()
-    #
-    # cursor.execute('''SELECT last_value FROM requests_id_seq''')
-    # id_num = cursor.fetchone()[0]
-    # cursor.execute(f'''DELETE FROM requests WHERE id = {id_num};''')
-    # cursor.execute(f'''SELECT setval('requests_id_seq', {id_num}, false);''')
-    # db.conn.commit()
-
     db.close()
 
 
@@ -53,6 +41,52 @@ def test_set_user(db):
     row = cursor.fetchone()
 
     assert row[0] == username
+
+
+def test_login_user(db):
+    db.create_tables()
+    cursor = db.conn.cursor()
+    username = "ffarzam"
+    password = "Ffarzam_1992"
+    cursor.execute(
+        f"""INSERT INTO Users(username,password) VALUES ('{username}',crypt('{password}', gen_salt('bf')));""")
+    db.conn.commit()
+
+    username1 = "fffarzam"
+    password1 = "Fffarzam_1992"
+    cursor.execute(
+        f"""INSERT INTO Users(username,password) VALUES ('{username1}',crypt('{password1}', gen_salt('bf')));""")
+    db.conn.commit()
+
+    assert db.login_user(username, password) is True
+    assert db.login_user(username1, password) is False
+
+
+def test_check_username(db):
+    db.create_tables()
+    cursor = db.conn.cursor()
+    username = "ffarzam"
+    password = "Ffarzam_1992"
+    cursor.execute(
+        f"""INSERT INTO Users(username,password) VALUES ('{username}',crypt('{password}', gen_salt('bf')));""")
+    db.conn.commit()
+    username1 = "fffarzam"
+    assert db.check_username(username)[0] == username
+    assert db.check_username(username1) is None
+
+
+def test_get_user(db):
+    db.create_tables()
+    cursor = db.conn.cursor()
+    username = "ffarzam"
+    password = "Ffarzam_1992"
+    cursor.execute(
+        f"""INSERT INTO Users(username,password) VALUES ('{username}',crypt('{password}', gen_salt('bf')));""")
+    db.conn.commit()
+
+    username1 = "fffarzam"
+    assert db.get_user(username)[0] == 1
+    assert db.get_user(username1) is None
 
 
 def test_save_request_data(db):
@@ -202,31 +236,30 @@ def test_get_last_hour_requests(db):
         f"""INSERT INTO Users(username,password) VALUES ('{username}',crypt('{password}', gen_salt('bf')));""")
     db.conn.commit()
 
-    user_id = 2
+    user_id1 = 2
     city_name1 = "rasht"
     request_time1 = "2023-04-08 23:11:11"
     cursor.execute(f"""INSERT INTO requests(user_id,city,request_time) 
-                                                VALUES ({user_id},'{city_name1}', '{request_time1}');""")
+                                                VALUES ({user_id1},'{city_name1}', '{request_time1}');""")
     db.conn.commit()
 
     lst = db.get_last_hour_requests()
 
-    assert lst[-1] == (city_name, request_time)
+    assert lst[-1] == (user_id, city_name, request_time)
     assert len(lst) == 1
 
 
 def test_get_city_request_count(db):
     db.create_tables()
     cursor = db.conn.cursor()
+
+    user_id = 1
     username = "ffarzam"
     password = "Ffarzam_1992"
     cursor.execute(
         f"""INSERT INTO Users(username,password) VALUES ('{username}',crypt('{password}', gen_salt('bf')));""")
     db.conn.commit()
 
-    f_count = 0
-
-    user_id = 1
     city_name = "rasht"
     request_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     cursor = db.conn.cursor()
@@ -236,6 +269,70 @@ def test_get_city_request_count(db):
     lst = db.get_city_request_count()
     for item in lst:
         if item[0] == city_name:
-            s_count = item[1]
+            count = item[1]
 
-    assert s_count == f_count + 1
+    assert count == 1
+
+
+def test_cache(db):
+    db.create_tables()
+    cursor = db.conn.cursor()
+    user_id = 1
+    username = "ffarzam"
+    password = "Ffarzam_1992"
+    cursor.execute(
+        f"""INSERT INTO Users(username,password) VALUES ('{username}',crypt('{password}', gen_salt('bf')));""")
+    db.conn.commit()
+
+    city_name = "rasht"
+    request_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    cursor = db.conn.cursor()
+    cursor.execute(f"""INSERT INTO requests(user_id,city,request_time) 
+                                                VALUES ({user_id},'{city_name}', '{request_time}');""")
+    db.conn.commit()
+
+    temperature = 30.0
+    feels_like_temperature = 28.4
+    last_update_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    weather_info = {'temperature': temperature, 'feels_like': feels_like_temperature, 'last_updated': last_update_time}
+
+    cursor.execute(f'''INSERT INTO responses(request_id,city,temperature,feels_like_temperature,last_updated_time)
+            VALUES (
+            (SELECT last_value FROM requests_id_seq),
+            '{city_name}',
+            {weather_info['temperature']},
+            {weather_info['feels_like']},
+            '{weather_info['last_updated']}');''')
+    db.conn.commit()
+
+    city_name1 = "tehran"
+    request_time1 = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    cursor = db.conn.cursor()
+    cursor.execute(f"""INSERT INTO requests(user_id,city,request_time) 
+                                                    VALUES ({user_id},'{city_name1}', '{request_time1}');""")
+    db.conn.commit()
+
+    temperature1 = 31.0
+    feels_like_temperature1 = 29.4
+    last_update_time1 = "2023-04-08 23:11:11"
+    weather_info1 = {'temperature': temperature1, 'feels_like': feels_like_temperature1,
+                     'last_updated': last_update_time1}
+
+    cursor.execute(f'''INSERT INTO responses(request_id,city,temperature,feels_like_temperature,last_updated_time)
+                VALUES (
+                (SELECT last_value FROM requests_id_seq),
+                '{city_name1}',
+                {weather_info1['temperature']},
+                {weather_info1['feels_like']},
+                '{weather_info1['last_updated']}');''')
+    db.conn.commit()
+
+    lst = db.cache(city_name)
+    lst1 = db.cache(city_name1)
+
+    assert lst[0] == user_id
+    assert lst[1] == city_name
+    assert float(lst[2]) == temperature
+    assert float(lst[3]) == feels_like_temperature
+    assert lst[4] == datetime.datetime.strptime(last_update_time, "%Y-%m-%d %H:%M:%S")
+    assert lst1 is None
