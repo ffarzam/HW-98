@@ -44,8 +44,8 @@ def save_user(db, username, password):
     db.set_user(username, password)
 
 
-def save_request(db, user_id, city_name):
-    db.save_request_data(user_id, city_name, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+def save_request(db, user_id, city_name,status_code):
+    db.save_request_data(user_id, city_name, datetime.now().strftime("%Y-%m-%d %H:%M:%S"),status_code)
 
 
 def save_response(db, city_name, response):
