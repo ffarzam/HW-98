@@ -17,6 +17,7 @@ class User:
     def save(self):
         response = rq.post("http://192.168.1.167:8080/",
                            json={"action": "signin", "username": self.username, "password": self.password})
+        return response
 
     @classmethod
     def login(cls, username, password):
