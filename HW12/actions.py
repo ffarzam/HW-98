@@ -3,8 +3,8 @@ from users import User
 
 
 def sign_in():
-    username = input("username")
-    password = input("password")
+    username = input("username: ")
+    password = input("password: ")
 
     user = User.register(username, password)
     return user
@@ -73,17 +73,13 @@ def successful_request_count(db):
 
 def last_hour_requests(db):
     lst = db.get_last_hour_requests()
-
-    show_item(lst)
+    for item in lst:
+        print('\033[32m', f"{item[0]}) {item[1]:25}{item[2]}", '\033[m')
+        print()
 
 
 def city_request_count(db):
     lst = db.get_city_request_count()
-
-    show_item(lst)
-
-
-def show_item(lst):
     for item in lst:
         print('\033[32m', f"{item[0]:25}{item[1]}", '\033[m')
         print()
