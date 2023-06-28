@@ -53,7 +53,7 @@ class WeatherDatabase:
         self.cur.execute(
             f"""SELECT id 
             FROM Users WHERE username ='{my_username}';""")
-        result = self.cur.fetchone()[0]
+        result = self.cur.fetchone()
         return result
 
     def save_request_data(self, user_id, city_name: str, request_time: str) -> None:
@@ -82,15 +82,25 @@ class WeatherDatabase:
         return result[0]
 
     def get_last_hour_requests(self) -> List[Tuple[Any, ...]]:
-        self.cur.execute('''SELECT city, TO_CHAR(request_time, 'YYYY-MM-DD HH24:MI:SS')
+        self.cur.execute('''SELECT id, city, TO_CHAR(request_time, 'YYYY-MM-DD HH24:MI:SS') as request_time
                             FROM requests 
-                            WHERE AGE(NOW(),request_time) < INTERVAL '1 Hour';''')
+                            WHERE AGE(NOW(),request_time) < INTERVAL '1 Hour'
+                            ORDER BY request_time DESC;''')
         result = self.cur.fetchall()
         return result
 
     def get_city_request_count(self) -> List[Tuple[Any, ...]]:
         self.cur.execute("SELECT city, COUNT(*) FROM requests GROUP BY city")
         result = self.cur.fetchall()
+        return result
+
+    def cache(self, city_name):
+        self.cur.execute(f'''SELECT id, city,temperature,feels_like_temperature,last_updated_time
+                            FROM responses
+                            WHERE AGE(NOW(),last_updated_time) < INTERVAL '10 MINUTE' AND city= '{city_name}'
+                            ORDER BY last_updated_time DESC
+                            LIMIT 1;''')
+        result = self.cur.fetchone()
         return result
 
     def close(self) -> None:
