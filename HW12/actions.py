@@ -64,11 +64,11 @@ def get_weather_info(username):
 
 
 def request_count(db):
-    print(db.get_request_count())
+    print('\033[35m' f"Number of requests so far: {db.get_request_count()}"'\033[m')
 
 
 def successful_request_count(db):
-    print(db.get_successful_request_count())
+    print('\033[35m' f"Number of successful requests so far: {db.get_successful_request_count()}" '\033[m')
 
 
 def last_hour_requests(db):
