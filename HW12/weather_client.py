@@ -1,4 +1,5 @@
 from actions import *
+import user_log
 
 
 def start_client() -> None:
@@ -14,32 +15,41 @@ def start_client() -> None:
             try:
                 user = sign_in()
                 send_user(user)
-                print("You've registered successfully!")
-            except Exception as e:
-                print(e)
+                user_log.user_logger.error(f"{user.username} signed up")
+
+            except Exception as err:
+                user_log.user_logger.error(err)
 
         elif choice == "2":
             username = input("username")
             password = input("password")
+            try:
+                if is_logged_in(username, password):
+                    user_log.user_logger.info(f"{username} logged in")
+                    while True:
+                        do_what = input("What do you want to do?\n"
+                                        "1)Get Weather Information\n"
+                                        "2)Exit\n"
+                                        "-----> ")
 
-            if is_logged_in(username, password):
-                while True:
-                    do_what = input("What do you want to do?\n"
-                                    "1) Get Weather Information\n"
-                                    "2)Exit\n"
-                                    "-----> ")
+                        if do_what == "1":
+                            get_weather_info(username)
 
-                    if do_what == "1":
-                        get_weather_info(username)
-
-                    elif do_what == "2":
-                        break
+                        elif do_what == "2":
+                            user_log.user_logger.info(f"{username} logged out")
+                            break
+            except Exception as err:
+                user_log.user_logger.error(err)
 
         elif choice == "3":
             break
 
 
 if __name__ == "__main__":
-    start_client()
+    try:
+        start_client()
+    except KeyboardInterrupt:
+
+        user_log.user_logger.info("Stopping the weather client")
 
     # Langarūd
