@@ -47,7 +47,7 @@ class MyWeatherServer(BaseHTTPRequestHandler):
         return dict(parse_qsl(self.url().query))
 
     def do_GET(self):
-        # try:
+        try:
             query_data = self.query_data()
             choice = query_data["city"]
             username = query_data["user"]
@@ -62,7 +62,7 @@ class MyWeatherServer(BaseHTTPRequestHandler):
                     self.send_header('Content-Type', 'application/json')
                     self.end_headers()
                     self.wfile.write(weather_info_json.encode("utf-8"))
-                    save_request(database, user_id, choice)
+                    save_request(database, user_id, choice,"200")
                     save_response(database, choice, weather_info)
 
                 else:
@@ -84,11 +84,11 @@ class MyWeatherServer(BaseHTTPRequestHandler):
                 self.send_header('Content-Type', 'application/json')
                 self.end_headers()
                 self.wfile.write("Somthing wrong".encode("utf-8"))
-        # except Exception as err:
-        #     server_log.server_logger.error(err)
+        except Exception as err:
+            server_log.server_logger.error(err)
 
     def do_POST(self):
-        # try:
+        try:
             self.send_response(200)
             self.send_header('Content-Type', 'application/json')
             self.end_headers()
@@ -104,8 +104,8 @@ class MyWeatherServer(BaseHTTPRequestHandler):
                 state = check_login_user(database, post_body_dict["username"], post_body_dict["password"])
                 state_json = json.dumps({"status": state})
                 self.wfile.write(state_json.encode('utf-8'))
-        # except Exception as err:
-        #     server_log.server_logger.error(err)
+        except Exception as err:
+            server_log.server_logger.error(err)
 
 
 def start_server() -> None:
@@ -115,17 +115,17 @@ def start_server() -> None:
 
     server = HTTPServer((HOST, PORT), MyWeatherServer)
     print("Server listening on")
-    # try:
-    server.serve_forever()
-    # except KeyboardInterrupt:
-    #     server_log.server_logger.info("Stopping Server.")
-    #     server.server_close()
-    #     print("Server closed")
-    #
-    # except Exception as err:
-    #     server_log.server_logger.critical(err)
-    #     server.server_close()
-    #     print("Server closed")
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        server_log.server_logger.info("Stopping Server.")
+        server.server_close()
+        print("Server closed")
+
+    except Exception as err:
+        server_log.server_logger.critical(err)
+        server.server_close()
+        print("Server closed")
 
 
 if __name__ == "__main__":
