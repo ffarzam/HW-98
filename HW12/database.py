@@ -83,7 +83,7 @@ class WeatherDatabase:
         return result[0]
 
     def get_last_hour_requests(self) -> List[Tuple[Any, ...]]:
-        self.cur.execute('''SELECT id, city, TO_CHAR(request_time, 'YYYY-MM-DD HH24:MI:SS') as request_time
+        self.cur.execute('''SELECT id, city, status_code, TO_CHAR(request_time, 'YYYY-MM-DD HH24:MI:SS') as request_time
                             FROM requests 
                             WHERE AGE(NOW(),request_time) < INTERVAL '1 Hour'
                             ORDER BY request_time DESC;''')
