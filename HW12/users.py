@@ -1,4 +1,4 @@
-from validators import *
+from HW12.validators import *
 import requests as rq
 
 
