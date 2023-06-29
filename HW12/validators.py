@@ -1,5 +1,5 @@
-from database import WeatherDatabase
-from utils import *
+from HW12.database import WeatherDatabase
+from HW12.utils import *
 
 
 class Username_UDescriptor:
