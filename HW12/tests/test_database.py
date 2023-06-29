@@ -253,7 +253,7 @@ def test_get_last_hour_requests(db):
 
     lst = db.get_last_hour_requests()
 
-    assert lst[-1] == (user_id, city_name, request_time)
+    assert lst[-1] == (user_id, city_name,int(status_code), request_time)
     assert len(lst) == 1
 
 
