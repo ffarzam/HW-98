@@ -1,10 +1,10 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import json
 from urllib.parse import parse_qsl, urlparse
-from actions import *
+from HW12.actions import *
 import requests as rq
-from database import WeatherDatabase
-import server_log
+from HW12.database import WeatherDatabase
+from HW12.server_log import server_logger
 
 
 class ConnectionManager:
@@ -35,7 +35,7 @@ def get_city_weather(city: str) -> dict:
 
             return {"status code": response.status_code, "weather_info": response.json()}
     except Exception as err:
-        server_log.server_logger.warning(err)
+        server_logger.warning(err)
 
 
 class MyWeatherServer(BaseHTTPRequestHandler):
@@ -85,7 +85,7 @@ class MyWeatherServer(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write("Somthing wrong".encode("utf-8"))
         except Exception as err:
-            server_log.server_logger.error(err)
+            server_logger.error(err)
 
     def do_POST(self):
         try:
@@ -105,7 +105,7 @@ class MyWeatherServer(BaseHTTPRequestHandler):
                 state_json = json.dumps({"status": state})
                 self.wfile.write(state_json.encode('utf-8'))
         except Exception as err:
-            server_log.server_logger.error(err)
+            server_logger.error(err)
 
 
 def start_server() -> None:
@@ -118,12 +118,12 @@ def start_server() -> None:
     try:
         server.serve_forever()
     except KeyboardInterrupt:
-        server_log.server_logger.info("Stopping Server.")
+        server_logger.info("Stopping Server.")
         server.server_close()
         print("Server closed")
 
     except Exception as err:
-        server_log.server_logger.critical(err)
+        server_logger.critical(err)
         server.server_close()
         print("Server closed")
 
