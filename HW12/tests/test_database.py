@@ -7,18 +7,16 @@ import datetime
 def db():
     db = WeatherDatabase(dbname="test")
     yield db
-    cursor = db.cur
+    cursor = db.conn.cursor()
     cursor.execute('''DROP TABLE IF EXISTS responses;''')
     cursor.execute('''DROP TABLE IF EXISTS requests;''')
     cursor.execute('''DROP TABLE IF EXISTS users;''')
     db.conn.commit()
 
-    db.close()
-
 
 def test_create_tables(db):
     db.create_tables()
-    cursor = db.cur
+    cursor = db.conn.cursor()
 
     cursor.execute('''SELECT table_name 
                         FROM information_schema.tables 
@@ -253,7 +251,7 @@ def test_get_last_hour_requests(db):
 
     lst = db.get_last_hour_requests()
 
-    assert lst[-1] == (user_id, city_name,int(status_code), request_time)
+    assert lst[-1] == (user_id, city_name, int(status_code), request_time)
     assert len(lst) == 1
 
 
