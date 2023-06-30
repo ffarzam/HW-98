@@ -5,6 +5,7 @@ from HW12.actions import *
 import requests as rq
 from HW12.database import WeatherDatabase
 from HW12.server_log import server_logger
+from HW12.constants import SERVER_HOST, SERVER_PORT, API_RAW_URL, API_KEY
 
 
 class ConnectionManager:
@@ -21,9 +22,9 @@ class ConnectionManager:
 
 def get_city_weather(city: str) -> dict:
     weather_info = {}
-    RAW_URL = "http://api.openweathermap.org/data/2.5/weather"
-    API_KEY = "3eb2381ac662acb4defa744088a680ba"
-    final_url = RAW_URL + "?q=" + city + "&appid=" + API_KEY + "&units=metric"
+    RAW_URL = API_RAW_URL
+    KEY = API_KEY
+    final_url = RAW_URL + "?q=" + city + "&appid=" + KEY + "&units=metric"
     try:
         with ConnectionManager(final_url) as response:
             if response:
@@ -54,7 +55,8 @@ class MyWeatherServer(BaseHTTPRequestHandler):
             user_id = get_user_id(database, username)
             if user_id is not None:
                 user_id = user_id[0]
-                if res := database.cache(choice):
+                res = database.cache(choice)
+                if res:
                     weather_info = {"temperature": float(res[2]), "feels_like": float(res[3]),
                                     "last_updated": res[4].strftime("%Y-%m-%d %H:%M:%S")}
                     weather_info_json = json.dumps(weather_info)
@@ -64,7 +66,6 @@ class MyWeatherServer(BaseHTTPRequestHandler):
                     self.wfile.write(weather_info_json.encode("utf-8"))
                     save_request(database, user_id, choice,"200")
                     save_response(database, choice, weather_info)
-
                 else:
                     weather_info = get_city_weather(choice)
                     weather_info_json = json.dumps(weather_info["weather_info"])
@@ -78,7 +79,6 @@ class MyWeatherServer(BaseHTTPRequestHandler):
                         save_response(database, choice, weather_info["weather_info"])
                     else:
                         save_request(database, user_id, choice,weather_info["status code"])
-
             else:
                 self.send_response(401)
                 self.send_header('Content-Type', 'application/json')
@@ -109,11 +109,8 @@ class MyWeatherServer(BaseHTTPRequestHandler):
 
 
 def start_server() -> None:
-    HOST = "192.168.1.167"
-    # HOST="192.168.1.110"
-    PORT = 8080
 
-    server = HTTPServer((HOST, PORT), MyWeatherServer)
+    server = HTTPServer((SERVER_HOST, SERVER_PORT), MyWeatherServer)
     print("Server listening on")
     try:
         server.serve_forever()
