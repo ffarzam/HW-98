@@ -54,7 +54,7 @@ def save_response(db, city_name, response):
 
 def get_weather_info(username):
     while True:
-        city_name = input('\033[32m' "Enter city name: "'\033[m')
+        city_name = input('\033[32m' "Enter city name: "'\033[m').lower()
         response = get_request(username, city_name)
         if response.status_code == 200:
             show(response)
