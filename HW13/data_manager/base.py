@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Any, Generator
 
 
-class BaseModel:
+class BaseModel(ABC):
     _id: int
 
     def __repr__(self):
