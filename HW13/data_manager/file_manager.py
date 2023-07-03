@@ -71,9 +71,10 @@ class FileManager(BaseManager):
             Any: The path to the created file.
         """
         m._id = self._get_id(m.__class__)  # set ID!!!!
-        with open(self._get_file_path(m._id, m.__class__), "wb") as f:
+        file_path = self._get_file_path(m._id, m.__class__)
+        with open(file_path, "wb") as f:
             pickle.dump(m, f)
-        return self._get_file_path(m._id, m.__class__)
+        return file_path
 
     def read(self, id: int, model_cls: type) -> BaseModel:
         """
