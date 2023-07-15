@@ -35,14 +35,16 @@ def search_result(request):
         # results = request.POST['searched']
         searched = request.GET.get('searched')
 
-        results = list(chain(Task.objects.filter(title__icontains=searched),
-                             Task.objects.filter(description__icontains=searched),
-                             Task.objects.filter(tag__name__icontains=searched)
-                             )
+        results = list(set(chain(Task.objects.filter(title__icontains=searched),
+                                 Task.objects.filter(description__icontains=searched),
+                                 Task.objects.filter(tag__name__icontains=searched)
+                                 )
+                           )
                        )
         # results = Task.objects.filter(Q(title__icontains=searched)
         #                               | Q(description__icontains=searched)
         #                               | Q(tag__name__icontains=searched)
         #                               )
+        # set
 
     return render(request, 'search_result.html', {"searched": searched, "results": results})
