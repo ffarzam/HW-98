@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %} Tasky {%endblock%}
+{% block content %}
+<div style="margin-top: 30px;padding-left:150px;margin-bottom: 10px;">
+    <h1>Tasks</h1><br>
+
+</div>
+{%for task in tasks %}
+<div style="margin-top: 10px;padding-left:150px;margin-bottom: 20px;">
+    <a href="{% url 'task_details' task.id %}">{{task.title}}</a><br>
+
+    <small>{{task.description}}</small>
+
+
+</div>
+
+{%endfor%}
+{%endblock%}
