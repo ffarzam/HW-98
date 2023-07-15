@@ -1,6 +1,6 @@
 .bg-gr{
-            background: #6a11cb;
-            background: linear-gradient(to right, rgba(106, 17, 203, 0.9), rgba(37, 117, 252, 0.9));
+            background: #6a11cb !important;
+            background: linear-gradient(to right, rgba(106, 17, 203, 0.9), rgba(37, 117, 252, 0.9)) !important;
 
   }
 
