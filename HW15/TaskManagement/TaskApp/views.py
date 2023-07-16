@@ -3,6 +3,7 @@ from .models import Category, Task, Tag
 from django.http import Http404
 from django.db.models import Q
 from itertools import chain
+from django.core.paginator import Paginator
 
 
 # Create your views here.
@@ -12,8 +13,12 @@ def home(request):
 
 
 def tasks(request):
-    all_tasks = Task.objects.all()
-    context = {"tasks": all_tasks}
+    all_tasks = Task.objects.all().order_by("due_date")
+
+    paginator = Paginator(all_tasks, 3)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+    context = {"tasks": page_obj}
     return render(request, "tasks.html", context=context)
 
 
@@ -34,17 +39,21 @@ def search_result(request):
     if request.method == "GET":
         # results = request.POST['searched']
         searched = request.GET.get('searched')
+        if searched:
+            # results = list(set(chain(Task.objects.filter(title__icontains=searched),
+            #                          Task.objects.filter(description__icontains=searched),
+            #                          Task.objects.filter(tag__name__icontains=searched)
+            #                          )
+            #                    )
+            #                )
+            results = list(set(Task.objects.filter(Q(title__icontains=searched)
+                                                   | Q(description__icontains=searched)
+                                                   | Q(tag__name__icontains=searched)
+                                                   )))
+            paginator = Paginator(results, 2)
+            page_number = request.GET.get("page")
+            page_obj = paginator.get_page(page_number)
 
-        results = list(set(chain(Task.objects.filter(title__icontains=searched),
-                                 Task.objects.filter(description__icontains=searched),
-                                 Task.objects.filter(tag__name__icontains=searched)
-                                 )
-                           )
-                       )
-        # results = Task.objects.filter(Q(title__icontains=searched)
-        #                               | Q(description__icontains=searched)
-        #                               | Q(tag__name__icontains=searched)
-        #                               )
-        # set
-
-    return render(request, 'search_result.html', {"searched": searched, "results": results})
+            return render(request, 'search_result.html', {"searched": searched, "results": page_obj})
+        else:
+            return render(request, 'search_result.html', {"searched": searched})
