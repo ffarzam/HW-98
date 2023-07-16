@@ -5,8 +5,8 @@
 
 <form class="d-flex justify-content-center h-100" method=GET action="{% url 'search_result' %}">
     <div class="search">
-        <input type="text" class="search-input" placeholder="search..." name="searched">
-        <button class="search-icon" type="submit"><i class="fa fa-search"></i></button>
+        <input type="text" class="search-input" placeholder="search..." name="searched" value="{{ request.GET.searched }}">
+        <button class="button-85" type="submit"><i class="fa fa-search"></i></button>
 
     </div>
 </form>
