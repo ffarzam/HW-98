@@ -9,7 +9,9 @@ from django.core.paginator import Paginator
 # Create your views here.
 
 def home(request):
-    return render(request, "home.html")
+    all_tasks = Task.objects.all()
+    context = {"tasks": all_tasks}
+    return render(request, "home.html", context=context)
 
 
 def tasks(request):
@@ -57,3 +59,14 @@ def search_result(request):
             return render(request, 'search_result.html', {"searched": searched, "results": page_obj})
         else:
             return render(request, 'search_result.html', {"searched": searched})
+
+
+def category(request):
+    all_categories = Category.objects.all()
+
+    paginator = Paginator(all_categories, 3)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+    context = {"categories": page_obj}
+
+    return render(request, "category.html", context=context)
