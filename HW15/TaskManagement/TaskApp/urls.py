@@ -7,4 +7,5 @@ urlpatterns = [
     path('tasks/<int:pk>/', views.task_details, name="task_details"),
     path('search/', views.search, name='search'),
     path('search_result/', views.search_result, name='search_result'),
+    path('category/', views.category, name='category'),
 ]
