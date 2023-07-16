@@ -2,15 +2,42 @@
 {% block title %} Tasky {%endblock%}
 {% block content %}
 
-<div>
+<div style="margin-top: 5px;padding-left:150px;padding-right:150px;margin-bottom: 10px;">
     {% if results %}
-        <h1>You Searched For {{searched}}</h1><br>
+    <h1>You Searched For {{searched}}</h1><br>
     {% for task in results %}
-    <a href="{% url 'task_details' task.id %}">{{task.title}}</a><br>
+    <div class="card" style="margin-top: 5px;margin-bottom: 20px; background-color: rgba(0,0,0,0.01); ">
+
+        <div class="card-body">
+            <h5 class="card-title"><a href="{% url 'task_details' task.id %}">{{task.title}}</a></h5>
+
+        </div>
+    </div>
 
     {% endfor%}
+
+    <div style="margin-top: 30px;margin-bottom: 10px;">
+        <div class="pagination justify-content-center">
+    <span class="step-links">
+        {% if results.has_previous %}
+            <a href="?page=1{% if request.GET.searched %}&searched={{ request.GET.searched }}{% endif %}">&laquo; first</a>
+            <a href="?page={{ results.previous_page_number }}{% if request.GET.searched %}&searched={{ request.GET.searched }}{% endif %}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ results.number }} of {{ results.paginator.num_pages }}.
+        </span>
+
+        {% if results.has_next %}
+            <a href="?page={{ results.next_page_number }}{% if request.GET.searched %}&searched={{ request.GET.searched }}{% endif %}">next</a>
+            <a href="?page={{ results.paginator.num_pages }}{% if request.GET.searched %}&searched={{ request.GET.searched }}{% endif %}">last &raquo;</a>
+        {% endif %}
+    </span>
+        </div>
+    </div>
     {% else %}
-        <h2>...</h2>
+    <h2>...</h2>
     {% endif %}
+
 </div>
 {%endblock%}
