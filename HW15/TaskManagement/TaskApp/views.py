@@ -1,27 +1,66 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import Category, Task, Tag
 from django.http import Http404
 from django.db.models import Q
 from itertools import chain
 from django.core.paginator import Paginator
+from datetime import datetime
 
 
 # Create your views here.
 
 def home(request):
-    all_tasks = Task.objects.all()
+    all_tasks = Task.objects.all().order_by("?")
+    for task in all_tasks:
+        if task.due_date < datetime.now().date():
+            task.status = "finished"
+            task.save()
+
     context = {"tasks": all_tasks}
     return render(request, "home.html", context=context)
 
 
-def tasks(request):
-    all_tasks = Task.objects.all().order_by("due_date")
+def task_filter(sorting_method, filter_method=None):
+    if filter_method:
+        all_tasks = Task.objects.filter(status=filter_method)
+    else:
+        all_tasks = Task.objects.all()
+    if not sorting_method:
+        all_tasks = all_tasks.order_by('due_date')
+    elif sorting_method == 'Title_ASC':
+        all_tasks = all_tasks.order_by('title')
+    elif sorting_method == 'Title_DESC':
+        all_tasks = all_tasks.order_by('-title')
+    elif sorting_method == 'Date_ASC':
+        all_tasks = all_tasks.order_by('due_date')
+    elif sorting_method == 'Date_DESC':
+        all_tasks = all_tasks.order_by('-due_date')
+    return all_tasks
 
-    paginator = Paginator(all_tasks, 3)
-    page_number = request.GET.get("page")
-    page_obj = paginator.get_page(page_number)
-    context = {"tasks": page_obj}
-    return render(request, "tasks.html", context=context)
+
+def tasks(request):
+    try:
+        filter_method = request.GET.get('gridRadios')
+        sorting_method = request.GET.get('select')
+        print(filter_method)
+        if not filter_method:
+            all_tasks = task_filter(sorting_method)
+
+        elif filter_method == "finished":
+
+            all_tasks = task_filter(sorting_method, filter_method)
+
+        elif filter_method == "ongoing":
+
+            all_tasks = task_filter(sorting_method, filter_method)
+
+        paginator = Paginator(all_tasks, 3)
+        page_number = request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
+        context = {"tasks": page_obj}
+        return render(request, "tasks.html", context=context)
+    except:
+        return redirect('tasks')
 
 
 def task_details(request, pk):
@@ -69,3 +108,14 @@ def category(request):
     context = {"categories": page_obj}
 
     return render(request, "category.html", context=context)
+
+
+def category_task(request, pk):
+    category_item = get_object_or_404(Category, id=pk)
+    all_tasks = Task.objects.filter(category=category_item)
+
+    paginator = Paginator(all_tasks, 2)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+    context = {"tasks": page_obj}
+    return render(request, "category_task.html", context=context)
