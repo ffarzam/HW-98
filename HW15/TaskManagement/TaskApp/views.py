@@ -14,7 +14,7 @@ def home(request):
     for task in all_tasks:
         if task.due_date < datetime.now().date():
             Task.objects.filter(id=task.id).update(status="finished")
-
+    all_tasks = Task.objects.all().order_by("?")
     context = {"tasks": all_tasks}
     return render(request, "home.html", context=context)
 
