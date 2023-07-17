@@ -13,11 +13,13 @@
 
     <link rel="stylesheet" href="{% static 'my_css.css' %}">
     <link rel="stylesheet" href="{% static 'search_css.css' %}">
-    <link rel="stylesheet" href="{% static 'btn_css.css' %}">
+    <link rel="stylesheet" href="{% static 'button_css.css' %}">
+    <link rel = "icon" href ="{% static 'favicon.ico' %}" type = "image/icon">
+
 
 
 </head>
-<body class="vh-100 d-flex flex-column justify-content-between bg-gr">
+<body class="vh-100 d-flex flex-column justify-content-between bg-gr" style="font-family: Calisto MT, fantasy">
         {%include "navbar.html"%}
     <div class="d-flex flex-column flex-grow-1 justify-content-center ">
         {% block content %} {%endblock%}
