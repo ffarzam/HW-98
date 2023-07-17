@@ -36,6 +36,13 @@
             Finished
         </label>
     </div>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios3" value="both"
+               {% if not request.GET.gridRadios %}checked{% endif %}>
+        <label class="form-check-label" for="gridRadios3">
+            both
+        </label>
+    </div>
 
     <div>
         <button class="button-85">SORT</button>
@@ -57,8 +64,8 @@
     <div class="pagination justify-content-center">
     <span class="step-links">
         {% if tasks.has_previous %}
-            <a href="?page=1{% if request.GET.select %}&select={{ request.GET.select }}{% endif %}">&laquo; first</a>
-            <a href="?page={{ tasks.previous_page_number }}{% if request.GET.select %}&select={{ request.GET.select }}{% endif %}">previous</a>
+            <a href="?page=1{% if request.GET.select %}&select={{ request.GET.select }}{% endif %}{% if request.GET.gridRadios %}&gridRadios={{ request.GET.gridRadios }}{% endif %}">&laquo; first</a>
+            <a href="?page={{ tasks.previous_page_number }}{% if request.GET.select %}&select={{ request.GET.select }}{% endif %}{% if request.GET.gridRadios %}&gridRadios={{ request.GET.gridRadios }}{% endif %}">previous</a>
         {% endif %}
 
         <span class="current">
@@ -66,8 +73,8 @@
         </span>
 
         {% if tasks.has_next %}
-            <a href="?page={{ tasks.next_page_number }}{% if request.GET.select %}&select={{ request.GET.select }}{% endif %}">next</a>
-            <a href="?page={{ tasks.paginator.num_pages }}{% if request.GET.select %}&select={{ request.GET.select }}{% endif %}">last &raquo;</a>
+            <a href="?page={{ tasks.next_page_number }}{% if request.GET.select %}&select={{ request.GET.select }}{% endif %}{% if request.GET.gridRadios %}&gridRadios={{ request.GET.gridRadios }}{% endif %}">next</a>
+            <a href="?page={{ tasks.paginator.num_pages }}{% if request.GET.select %}&select={{ request.GET.select }}{% endif %}{% if request.GET.gridRadios %}&gridRadios={{ request.GET.gridRadios }}{% endif %}">last &raquo;</a>
         {% endif %}
     </span>
     </div>
