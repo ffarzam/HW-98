@@ -14,7 +14,7 @@
          style="margin-top: 5px;margin-bottom: 5px; background-color: rgba(0,0,0,0.01); ">
 
         <div class="card-body">
-            <h5 class="card-title">{{category.name}}</h5>
+            <h5 class="card-title"><a href="{% url 'category_task' category.id %}">{{category.name}}</a></h5>
 
         </div>
     </div>
