@@ -3,21 +3,51 @@
 {% block title %} Tasky {%endblock%}
 
 {% block content %}
-<div class="d-flex justify-content-between" style="margin-top: 10px;padding-left:150px;padding-right:150px;margin-bottom: 10px;">
+<div class="d-flex justify-content-between"
+     style="margin-top: 10px;padding-left:150px;padding-right:150px;margin-bottom: 10px;">
     <h1>Tasks</h1>
 
-    <a href="{% url 'category'%}"><button class="button-85" role="button">category</button></a>
+    <a href="{% url 'category'%}">
+        <button class="button-85" role="button">Category</button>
+    </a>
 </div>
+<form action="" class="d-flex justify-content-between " method="GET"
+      style="margin-top: 10px;padding-left:150px;padding-right:150px;margin-bottom: 10px;">
+    <div>
+        <select class="form-select" name="select">
+            <option disabled selected> {% if request.GET.select %}{{ request.GET.select }}{% else %}Sorting method{% endif %}</option>
+            <option value="Title_ASC">Title_ASC</option>
+            <option value="Title_DESC">Title_DESC</option>
+            <option value="Date_ASC">Date_ASC</option>
+            <option value="Date_DESC">Date_DESC</option>
+        </select>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="ongoing"
+               {% if request.GET.gridRadios == 'ongoing' %}checked{% endif %}>
+        <label class="form-check-label" for="gridRadios1">
+            Ongoing
+        </label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="finished"
+               {% if request.GET.gridRadios == 'finished' %}checked{% endif %}>
+        <label class="form-check-label" for="gridRadios2">
+            Finished
+        </label>
+    </div>
+
+    <div>
+        <button class="button-85">SORT</button>
+    </div>
+</form>
 
 {%for task in tasks %}
-<div style="margin-top: 5px;padding-left:150px;padding-right:150px;margin-bottom: 10px; background-color: rgba(0,0,0,0.01); ">
-
+<div style="margin-top: 5px;padding-left:150px;padding-right:150px;margin-bottom: 10px; background-color: rgba(0,0,0,0.01);">
     <div class="card"
          style="margin-top: 5px;margin-bottom: 5px; background-color: rgba(0,0,0,0.01); ">
-
         <div class="card-body">
             <h5 class="card-title"><a href="{% url 'task_details' task.id %}">{{task.title}}</a></h5>
-
         </div>
     </div>
 </div>
@@ -27,8 +57,8 @@
     <div class="pagination justify-content-center">
     <span class="step-links">
         {% if tasks.has_previous %}
-            <a href="?page=1">&laquo; first</a>
-            <a href="?page={{ tasks.previous_page_number }}">previous</a>
+            <a href="?page=1{% if request.GET.select %}&select={{ request.GET.select }}{% endif %}">&laquo; first</a>
+            <a href="?page={{ tasks.previous_page_number }}{% if request.GET.select %}&select={{ request.GET.select }}{% endif %}">previous</a>
         {% endif %}
 
         <span class="current">
@@ -36,8 +66,8 @@
         </span>
 
         {% if tasks.has_next %}
-            <a href="?page={{ tasks.next_page_number }}">next</a>
-            <a href="?page={{ tasks.paginator.num_pages }}">last &raquo;</a>
+            <a href="?page={{ tasks.next_page_number }}{% if request.GET.select %}&select={{ request.GET.select }}{% endif %}">next</a>
+            <a href="?page={{ tasks.paginator.num_pages }}{% if request.GET.select %}&select={{ request.GET.select }}{% endif %}">last &raquo;</a>
         {% endif %}
     </span>
     </div>
