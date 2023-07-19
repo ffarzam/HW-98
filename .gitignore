@@ -162,3 +162,4 @@ cython_debug/
 #.idea/
 
 /HW15/TaskManagement/TaskApp/migrations/
+/HW15/TaskManagement/media/
