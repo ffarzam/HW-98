@@ -25,24 +25,31 @@
         </select>
     </div>
     <div class="form-check">
-        <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="ongoing"
-               {% if request.GET.gridRadios == 'ongoing' %}checked{% endif %}>
+        <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="todo"
+               {% if request.GET.gridRadios == 'todo' %}checked{% endif %}>
         <label class="form-check-label" for="gridRadios1">
-            Ongoing
+            To Do
         </label>
     </div>
     <div class="form-check">
-        <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="finished"
-               {% if request.GET.gridRadios == 'finished' %}checked{% endif %}>
+        <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="doing"
+               {% if request.GET.gridRadios == 'doing' %}checked{% endif %}>
+        <label class="form-check-label" for="gridRadios1">
+            Doing
+        </label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios3" value="done"
+               {% if request.GET.gridRadios == 'done' %}checked{% endif %}>
         <label class="form-check-label" for="gridRadios2">
-            Finished
+            Done
         </label>
     </div>
     <div class="form-check">
-        <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios3" value="both"
-               {% if request.GET.gridRadios == 'both' or not request.GET.gridRadios %}checked{% endif %}>
+        <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios4" value="all"
+               {% if request.GET.gridRadios == 'all' or not request.GET.gridRadios %}checked{% endif %}>
         <label class="form-check-label" for="gridRadios3">
-            Both
+            All
         </label>
     </div>
 
