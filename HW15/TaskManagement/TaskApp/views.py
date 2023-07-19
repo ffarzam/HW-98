@@ -5,6 +5,9 @@ from django.db.models import Q
 from itertools import chain
 from django.core.paginator import Paginator
 from datetime import datetime
+import mimetypes
+from django.http.response import HttpResponse
+import os
 
 
 # Create your views here.
@@ -12,6 +15,7 @@ from datetime import datetime
 def home(request):
     all_tasks = Task.objects.all().order_by("?")
     for task in all_tasks:
+        # print(os.path.basename(f"{task.file}"))
         if task.due_date < datetime.now().date():
             Task.objects.filter(id=task.id).update(status="finished")
     all_tasks = Task.objects.all().order_by("?")
@@ -20,13 +24,13 @@ def home(request):
 
 
 def task_filter(sorting_method, filter_method=None):
-    if filter_method:
-        all_tasks = Task.objects.filter(status=filter_method)
-    else:
+    if filter_method is None or filter_method == "both":
         all_tasks = Task.objects.all()
-    if not sorting_method:
-        all_tasks = all_tasks.order_by('due_date')
-    elif sorting_method == 'Title_ASC':
+
+    else:
+        all_tasks = Task.objects.filter(status=filter_method)
+
+    if sorting_method == 'Title_ASC':
         all_tasks = all_tasks.order_by('title')
     elif sorting_method == 'Title_DESC':
         all_tasks = all_tasks.order_by('-title')
@@ -34,6 +38,10 @@ def task_filter(sorting_method, filter_method=None):
         all_tasks = all_tasks.order_by('due_date')
     elif sorting_method == 'Date_DESC':
         all_tasks = all_tasks.order_by('-due_date')
+    elif sorting_method == 'No Order':
+        all_tasks = all_tasks
+    else:
+        all_tasks = all_tasks.order_by('due_date')
     return all_tasks
 
 
@@ -41,17 +49,18 @@ def tasks(request):
     try:
         filter_method = request.GET.get('gridRadios')
         sorting_method = request.GET.get('select')
-        print(filter_method)
-        if not filter_method:
-            all_tasks = task_filter(sorting_method)
+
+        if filter_method == "both":
+            all_tasks = task_filter(sorting_method, filter_method)
 
         elif filter_method == "finished":
-
             all_tasks = task_filter(sorting_method, filter_method)
 
         elif filter_method == "ongoing":
-
             all_tasks = task_filter(sorting_method, filter_method)
+        else:
+            print("hi")
+            all_tasks = task_filter(sorting_method)
 
         paginator = Paginator(all_tasks, 3)
         page_number = request.GET.get("page")
@@ -59,13 +68,13 @@ def tasks(request):
         context = {"tasks": page_obj}
         return render(request, "tasks.html", context=context)
     except:
-        return redirect('tasks')
+        raise Http404("No matches the given query.")
 
 
 def task_details(request, pk):
     try:
         task = get_object_or_404(Task, id=pk)
-        context = {"task": task}
+        context = {"task": task, "path": os.path.basename(f"{task.file}")}
         return render(request, "task_details.html", context=context)
     except:
         raise Http404("No matches the given query.")
@@ -118,3 +127,17 @@ def category_task(request, pk):
     page_obj = paginator.get_page(page_number)
     context = {"tasks": page_obj}
     return render(request, "category_task.html", context=context)
+
+
+def about_us(request):
+    return render(request, "about_us.html")
+
+
+def download_file(request, filename):
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    filepath = BASE_DIR + '/media/uploads/' + filename
+    path = open(filepath, 'rb')
+    mime_type, _ = mimetypes.guess_type(filepath)
+    response = HttpResponse(path, content_type=mime_type)
+    response['Content-Disposition'] = "attachment; filename=%s" % filename
+    return response
