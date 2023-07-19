@@ -7,7 +7,7 @@
      style="margin-top: 10px;padding-right:150px;margin-bottom: 10px;">
         <h3>{{task.title}}</h3>
         {%if task.file %}
-        <a href="{% url 'download_file' path %}"> <button class="button-85" role="button">Download</button></a>
+        <a href="{% url 'download_file' name %}"> <button class="button-85" role="button">Download</button></a>
         {% endif %}
     </div>
 
