@@ -5,8 +5,9 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from datetime import datetime
 import mimetypes
-from django.http.response import HttpResponse
+from django.http.response import HttpResponse, FileResponse
 import os
+from django.conf import settings
 
 
 # Create your views here.
@@ -78,7 +79,7 @@ def task_details(request, pk):
     if request.method == "GET":
         try:
             task = get_object_or_404(Task, id=pk)
-            context = {"task": task, "path": os.path.basename(f"{task.file}")}
+            context = {"task": task, "name": os.path.basename(f"{task.file}")}
             return render(request, "task_details.html", context=context)
         except:
             raise Http404("No matches the given query.")
@@ -135,10 +136,21 @@ def about_us(request):
 
 
 def download_file(request, filename):
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    filepath = BASE_DIR + '/media/uploads/' + filename
-    path = open(filepath, 'rb')
+    filepath = settings.BASE_DIR / f'media/uploads/{filename}'
+    file = open(filepath, 'rb')
     mime_type, _ = mimetypes.guess_type(filepath)
-    response = HttpResponse(path, content_type=mime_type)
-    response['Content-Disposition'] = "attachment; filename=%s" % filename
+    response = FileResponse(file, content_type=mime_type)
+    response['Content-Disposition'] = f"attachment; filename={filename}"
     return response
+
+
+# def view_file(request, filename):
+#     print("hiiii")
+#     filepath = settings.BASE_DIR / f'media/uploads/{filename}'
+#     #
+#     mime_type, _ = mimetypes.guess_type(filepath)
+#     with open(filepath, 'rb') as file:
+#         response = HttpResponse(file.read(), content_type=mime_type)
+#         response['Content-Disposition'] = f"Inline; filename='{filename}'"
+#     # return render(request, "show.html",context={"data":filepath})
+#     return response
