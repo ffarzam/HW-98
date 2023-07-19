@@ -2,7 +2,6 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Category, Task, Tag
 from django.http import Http404
 from django.db.models import Q
-from itertools import chain
 from django.core.paginator import Paginator
 from datetime import datetime
 import mimetypes
@@ -13,18 +12,18 @@ import os
 # Create your views here.
 
 def home(request):
-    all_tasks = Task.objects.all().order_by("?")
-    for task in all_tasks:
-        # print(os.path.basename(f"{task.file}"))
-        if task.due_date < datetime.now().date():
-            Task.objects.filter(id=task.id).update(status="finished")
-    all_tasks = Task.objects.all().order_by("?")
-    context = {"tasks": all_tasks}
-    return render(request, "home.html", context=context)
+    if request.method == "GET":
+        all_tasks = Task.objects.all().order_by("?")
+        for task in all_tasks:
+            if task.due_date < datetime.now().date():
+                Task.objects.filter(id=task.id).update(status="done")
+        all_tasks = Task.objects.all().order_by("?")
+        context = {"tasks": all_tasks}
+        return render(request, "home.html", context=context)
 
 
 def task_filter(sorting_method, filter_method=None):
-    if filter_method is None or filter_method == "both":
+    if filter_method is None or filter_method == "all":
         all_tasks = Task.objects.all()
 
     else:
@@ -46,54 +45,55 @@ def task_filter(sorting_method, filter_method=None):
 
 
 def tasks(request):
-    try:
-        filter_method = request.GET.get('gridRadios')
-        sorting_method = request.GET.get('select')
+    if request.method == "GET":
+        try:
+            filter_method = request.GET.get('gridRadios')
+            sorting_method = request.GET.get('select')
 
-        if filter_method == "both":
-            all_tasks = task_filter(sorting_method, filter_method)
+            if filter_method == "all":
+                all_tasks = task_filter(sorting_method, filter_method)
 
-        elif filter_method == "finished":
-            all_tasks = task_filter(sorting_method, filter_method)
+            elif filter_method == "done":
+                all_tasks = task_filter(sorting_method, filter_method)
 
-        elif filter_method == "ongoing":
-            all_tasks = task_filter(sorting_method, filter_method)
-        else:
-            print("hi")
-            all_tasks = task_filter(sorting_method)
+            elif filter_method == "doing":
+                all_tasks = task_filter(sorting_method, filter_method)
 
-        paginator = Paginator(all_tasks, 3)
-        page_number = request.GET.get("page")
-        page_obj = paginator.get_page(page_number)
-        context = {"tasks": page_obj}
-        return render(request, "tasks.html", context=context)
-    except:
-        raise Http404("No matches the given query.")
+            elif filter_method == "todo":
+                all_tasks = task_filter(sorting_method, filter_method)
+
+            else:
+                all_tasks = task_filter(sorting_method)
+
+            paginator = Paginator(all_tasks, 3)
+            page_number = request.GET.get("page")
+            page_obj = paginator.get_page(page_number)
+            context = {"tasks": page_obj}
+            return render(request, "tasks.html", context=context)
+        except:
+            raise Http404("No matches the given query.")
 
 
 def task_details(request, pk):
-    try:
-        task = get_object_or_404(Task, id=pk)
-        context = {"task": task, "path": os.path.basename(f"{task.file}")}
-        return render(request, "task_details.html", context=context)
-    except:
-        raise Http404("No matches the given query.")
+    if request.method == "GET":
+        try:
+            task = get_object_or_404(Task, id=pk)
+            context = {"task": task, "path": os.path.basename(f"{task.file}")}
+            return render(request, "task_details.html", context=context)
+        except:
+            raise Http404("No matches the given query.")
 
 
 def search(request):
-    return render(request, 'search.html')
+    if request.method == "GET":
+        return render(request, 'search.html')
 
 
 def search_result(request):
     if request.method == "GET":
         searched = request.GET.get('searched')
         if searched:
-            # results = list(set(chain(Task.objects.filter(title__icontains=searched),
-            #                          Task.objects.filter(description__icontains=searched),
-            #                          Task.objects.filter(tag__name__icontains=searched)
-            #                          )
-            #                    )
-            #                )
+
             results = Task.objects.filter(Q(title__icontains=searched)
                                           | Q(description__icontains=searched)
                                           | Q(tag__name__icontains=searched)
@@ -108,25 +108,26 @@ def search_result(request):
 
 
 def category(request):
-    all_categories = Category.objects.all()
+    if request.method == "GET":
+        all_categories = Category.objects.all()
+        paginator = Paginator(all_categories, 3)
+        page_number = request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
+        context = {"categories": page_obj}
 
-    paginator = Paginator(all_categories, 3)
-    page_number = request.GET.get("page")
-    page_obj = paginator.get_page(page_number)
-    context = {"categories": page_obj}
-
-    return render(request, "category.html", context=context)
+        return render(request, "category.html", context=context)
 
 
 def category_task(request, pk):
-    category_item = get_object_or_404(Category, id=pk)
-    all_tasks = Task.objects.filter(category=category_item)
+    if request.method == "GET":
+        category_item = get_object_or_404(Category, id=pk)
+        all_tasks = Task.objects.filter(category=category_item)
 
-    paginator = Paginator(all_tasks, 2)
-    page_number = request.GET.get("page")
-    page_obj = paginator.get_page(page_number)
-    context = {"tasks": page_obj}
-    return render(request, "category_task.html", context=context)
+        paginator = Paginator(all_tasks, 2)
+        page_number = request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
+        context = {"tasks": page_obj}
+        return render(request, "category_task.html", context=context)
 
 
 def about_us(request):
