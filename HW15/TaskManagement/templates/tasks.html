@@ -11,15 +11,17 @@
         <button class="button-85" role="button">Category</button>
     </a>
 </div>
-<form action="" class="d-flex justify-content-between " method="GET"
+<form action="." class="d-flex justify-content-between " method="GET"
       style="margin-top: 10px;padding-left:150px;padding-right:150px;margin-bottom: 10px;">
+
     <div>
         <select class="form-select" name="select">
-            <option disabled selected> {% if request.GET.select %}{{ request.GET.select }}{% else %}Sorting method{% endif %}</option>
-            <option value="Title_ASC">Title_ASC</option>
-            <option value="Title_DESC">Title_DESC</option>
-            <option value="Date_ASC">Date_ASC</option>
-            <option value="Date_DESC">Date_DESC</option>
+            <option selected> {% if request.GET.select %}{{ request.GET.select }}{% else %}Sorting method{% endif %}</option>
+            {% if request.GET.select != "No Order" %}<option value="No Order">No Order</option>{% endif %}
+            {% if request.GET.select != "Title_ASC" %}<option value="Title_ASC">Title_ASC</option>{% endif %}
+            {% if request.GET.select != "Title_DESC" %}<option value="Title_DESC">Title_DESC</option>{% endif %}
+            {% if request.GET.select != "Date_ASC" %}<option value="Date_ASC">Date_ASC</option>{% endif %}
+            {% if request.GET.select != "Date_DESC" %}<option  value="Date_DESC">Date_DESC</option>{% endif %}
         </select>
     </div>
     <div class="form-check">
@@ -38,9 +40,9 @@
     </div>
     <div class="form-check">
         <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios3" value="both"
-               {% if not request.GET.gridRadios %}checked{% endif %}>
+               {% if request.GET.gridRadios == 'both' or not request.GET.gridRadios %}checked{% endif %}>
         <label class="form-check-label" for="gridRadios3">
-            both
+            Both
         </label>
     </div>
 
@@ -53,8 +55,9 @@
 <div style="margin-top: 5px;padding-left:150px;padding-right:150px;margin-bottom: 10px; background-color: rgba(0,0,0,0.01);">
     <div class="card"
          style="margin-top: 5px;margin-bottom: 5px; background-color: rgba(0,0,0,0.01); ">
-        <div class="card-body">
+        <div class="card-body d-flex justify-content-between">
             <h5 class="card-title"><a href="{% url 'task_details' task.id %}">{{task.title}}</a></h5>
+            <span>{{task.due_date}}</span>
         </div>
     </div>
 </div>
