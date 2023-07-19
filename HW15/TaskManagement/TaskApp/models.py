@@ -19,11 +19,13 @@ class Tag(models.Model):
 
 
 class Task(models.Model):
-    ONGOING = "ongoing"
-    FINISHED = "finished"
+    TODO = "todo"
+    DOING = "doing"
+    DONE = "done"
     status_choice = [
-        (ONGOING, 'Ongoing'),
-        (FINISHED, 'Finished'),
+        (TODO, 'Todo'),
+        (DOING, 'Doing'),
+        (DONE, 'Done'),
     ]
     title = models.CharField(max_length=255)
     description = models.TextField()
@@ -31,6 +33,7 @@ class Task(models.Model):
     status = models.CharField(max_length=20, choices=status_choice)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     tag = models.ManyToManyField(Tag)
+    file = models.FileField(upload_to='uploads/', null=True, blank=True)
 
     def get_tags(self):
         task = Task.objects.get(id=self.id)
