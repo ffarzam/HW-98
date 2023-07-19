@@ -95,9 +95,9 @@ def search_result(request):
         searched = request.GET.get('searched')
         if searched:
 
-            results = Task.objects.filter(Q(title__icontains=searched)
-                                          | Q(description__icontains=searched)
-                                          | Q(tag__name__icontains=searched)
+            results = Task.objects.filter(Q(title__contains=searched)
+                                          | Q(description__contains=searched)
+                                          | Q(tag__name__contains=searched)
                                           ).distinct()
             paginator = Paginator(results, 2)
             page_number = request.GET.get("page")
