@@ -16,7 +16,7 @@
 </header>
 
 <div style="margin-top: 5px;padding-left:150px;padding-right:150px;margin-bottom: 50px; ">
-    <div class="d-flex row gy-3 justify-content-space-evenly">
+    <div class="d-flex row gy-3 justify-content-around">
         {%for task in tasks %}
         <div class="col-2">
             <a  href="{% url 'task_details' task.id %}">
