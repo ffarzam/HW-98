@@ -14,11 +14,13 @@ from django.conf import settings
 
 def home(request):
     if request.method == "GET":
+
         all_tasks = Task.objects.all().order_by("?")
         for task in all_tasks:
             if task.due_date < datetime.now().date():
                 Task.objects.filter(id=task.id).update(status="done")
         all_tasks = Task.objects.all().order_by("?")
+
         context = {"tasks": all_tasks}
         return render(request, "home.html", context=context)
 
@@ -144,13 +146,12 @@ def download_file(request, filename):
     return response
 
 
-# def view_file(request, filename):
-#     print("hiiii")
-#     filepath = settings.BASE_DIR / f'media/uploads/{filename}'
-#     #
-#     mime_type, _ = mimetypes.guess_type(filepath)
-#     with open(filepath, 'rb') as file:
-#         response = HttpResponse(file.read(), content_type=mime_type)
-#         response['Content-Disposition'] = f"Inline; filename='{filename}'"
-#     # return render(request, "show.html",context={"data":filepath})
-#     return response
+def view_file(request, filename):
+
+    filepath = settings.BASE_DIR / f'media/uploads/{filename}'
+    #
+    mime_type, _ = mimetypes.guess_type(filepath)
+    with open(filepath, 'rb') as file:
+        response = HttpResponse(file.read(), content_type=mime_type)
+        response['Content-Disposition'] = f"inline; filename={filename}"
+    return response
