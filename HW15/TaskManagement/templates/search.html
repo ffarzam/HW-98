@@ -5,12 +5,13 @@
 {% block content %}
 
 <form class="d-flex justify-content-center h-100" action="{% url 'search_result' %}">
-    <div class="search">
-        <input type="text" class="search-input" placeholder="search..." name="searched">
-        <button class="button-85" type="submit">
+    <div class="search" >
+        <input type="text" class="search-input" placeholder="search..." name="searched" autocomplete="off">
+        <button class="button-85" type="submit" style="min-width:50px; padding:0px">
             <i class="fa fa-search"></i>
         </button>
     </div>
 </form>
+
 
 {%endblock%}
