@@ -1,6 +1,6 @@
 from typing import List, Tuple, Any
 import psycopg2
-from HW12.constants import DATABASE, USER, PASSWORD, DATABASE_HOST, DATABASE_PORT
+from constants import DATABASE, USER, PASSWORD, DATABASE_HOST, DATABASE_PORT
 
 
 class Singleton(type):

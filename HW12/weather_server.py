@@ -1,11 +1,11 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import json
 from urllib.parse import parse_qsl, urlparse
-from HW12.actions import *
+from actions import *
 import requests as rq
-from HW12.database import WeatherDatabase
-from HW12.server_log import server_logger
-from HW12.constants import SERVER_HOST, SERVER_PORT, API_RAW_URL, API_KEY
+from database import WeatherDatabase
+from server_log import server_logger
+from constants import SERVER_HOST, SERVER_PORT, API_RAW_URL, API_KEY
 
 
 class ConnectionManager:
